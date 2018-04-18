@@ -24,7 +24,7 @@ import retrofit2.Response
 
 open class SearchResultActivity : AppCompatActivity() {
 
-    val idlingResource = CountingIdlingResource("name1")
+//    val idlingResource = CountingIdlingResource("name1")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,12 +38,12 @@ open class SearchResultActivity : AppCompatActivity() {
 
             val callback = object : Callback<GitHubSearchResult> {
                 override fun onResponse(call: Call<GitHubSearchResult>?, response: Response<GitHubSearchResult>?) {
-                    idlingResource.increment()
-
                     val searchResult = response?.body()
                     if (searchResult != null) {
                         listRepos(searchResult!!.items)
                     }
+
+//                    idlingResource.decrement()
                 }
 
                 override fun onFailure(call: Call<GitHubSearchResult>?, t: Throwable?) {
@@ -51,8 +51,8 @@ open class SearchResultActivity : AppCompatActivity() {
                 }
 
             }
+//            idlingResource.increment()
             retriever.searchRepos(callback,searchTerm)
-            idlingResource.decrement()
         }else{
             // User Repo
             val username = intent.getStringExtra("username")
@@ -92,9 +92,11 @@ open class SearchResultActivity : AppCompatActivity() {
 
     }
 
+/*
     open fun getEspressoIdlingResourceForSearchActivity(): CountingIdlingResource {
         return idlingResource
     }
+*/
 }
 
 class RepoAdapter(context: Context?, resource: Int, objects: List<Repo>?): ArrayAdapter<Repo>(context, resource, objects){

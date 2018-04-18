@@ -5,6 +5,7 @@ import android.support.test.InstrumentationRegistry
 import android.support.test.espresso.Espresso
 import android.support.test.espresso.Espresso.*
 import android.support.test.espresso.IdlingRegistry
+import android.support.test.espresso.IdlingResource
 import android.support.test.espresso.action.ViewActions
 import android.support.test.espresso.action.ViewActions.click
 import android.support.test.espresso.action.ViewActions.typeText
@@ -32,6 +33,8 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import android.support.test.espresso.idling.CountingIdlingResource
 import android.support.test.uiautomator.UiSelector
+import com.example.maxruban.findrepo.OkHttpProvider
+import com.jakewharton.espresso.OkHttp3IdlingResource
 import org.junit.Assert
 import org.junit.Before
 import java.util.regex.Pattern
@@ -63,9 +66,9 @@ open class EspressoSearchRepoTest<WebViewActivity : Activity?>
     @Test
 
     fun verifyAppFoundRepoByWord(){
+        val okhttpIdlingResource = OkHttp3IdlingResource.create("OkHttp", OkHttpProvider.okHttpClient)
 
-        val searchResultActivityIdleResource = SearchResultActivity().getEspressoIdlingResourceForSearchActivity()
-        IdlingRegistry.getInstance().register(searchResultActivityIdleResource)
+        IdlingRegistry.getInstance().register(okhttpIdlingResource)
 
         onView(withId(R.id.searchEditText))
                 .perform(typeText("code"));
@@ -75,6 +78,8 @@ open class EspressoSearchRepoTest<WebViewActivity : Activity?>
                 .inAdapterView(allOf(withId(R.id.repoListView)))
                 .atPosition(0)
                 .check(matches(isDisplayed()))
+
+        IdlingRegistry.getInstance().unregister(okhttpIdlingResource)
     }
 
     @Test
